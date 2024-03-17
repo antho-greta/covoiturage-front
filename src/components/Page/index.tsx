@@ -11,6 +11,7 @@ interface PageStyledProps {
 
 const PageStyled = styled.div<PageStyledProps>`
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;

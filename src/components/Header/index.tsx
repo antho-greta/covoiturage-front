@@ -7,6 +7,7 @@ import {
     NavigationMenuList
 } from "@radix-ui/react-navigation-menu";
 
+
 interface StyledLinkProps {
     className?: string,
     $isFullLink?: boolean
@@ -25,10 +26,16 @@ const StyledLink = styled(Link)<StyledLinkProps>`
     }
 `
 
+const CenteredNavigationMenuList = styled(NavigationMenuList)`
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+`
+
 function Header() {
     return (
         <NavigationMenu>
-            <NavigationMenuList>
+            <CenteredNavigationMenuList>
                 <NavigationMenuItem>
                     <StyledLink to="/">Liste des Trajets</StyledLink>
                     <StyledLink to="/searchTrips">Rechercher un Trajet</StyledLink>
@@ -36,7 +43,7 @@ function Header() {
                     <StyledLink to="/addTrip">Publier un Trajet</StyledLink>
                     <StyledLink to="/account">Mon compte</StyledLink>
                 </NavigationMenuItem>
-            </NavigationMenuList>
+            </CenteredNavigationMenuList>
         </NavigationMenu>
     )
 }

@@ -6,9 +6,12 @@ import SearchTrip from './pages/SearchTrip/Index.tsx'
 import YourTrips from './pages/YourTrips/Index.tsx'
 import AddTrip from './pages/AddTrip/Index.tsx'
 import Account from './pages/Account/Index.tsx'
-import Header from './components/Header'
+import Login from "./pages/Login/Index.tsx";
 import Error from "./components/Error.tsx";
+
+import Header from './components/Header'
 import {createGlobalStyle} from "styled-components";
+import {accountService} from "./services/account.service.tsx";
 
 interface GlobalStyleProps {
     className?: string
@@ -20,17 +23,26 @@ const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     }
 `
 
+const AuthGuard = ({children}: {children: React.ReactNode}) => {
+    if (!accountService.isLogged()) {
+        return <Login/>
+    }
+    return children
+};
+
+
 ReactDOM.render(
     <React.StrictMode>
         <Router>
             <GlobalStyle />
             <Header />
             <Routes>
-                <Route path="/" element={<AllTrips />} />
-                <Route path="/searchTrips" element={<SearchTrip />} />
-                <Route path="/yourTrips" element={<YourTrips />} />
-                <Route path="/addTrip" element={<AddTrip />} />
-                <Route path="/account" element={<Account />} />
+                <Route path="/" element={<AuthGuard><AllTrips /></AuthGuard>} />
+                <Route path="/searchTrips" element={<AuthGuard><SearchTrip /></AuthGuard>} />
+                <Route path="/yourTrips" element={<AuthGuard><YourTrips /></AuthGuard>} />
+                <Route path="/addTrip" element={<AuthGuard><AddTrip /></AuthGuard>} />
+                <Route path="/account" element={<AuthGuard><Account /></AuthGuard>} />
+                <Route path="/login" element={<Login />} />
                 <Route path="*" element={<Error />}/>
             </Routes>
         </Router>
