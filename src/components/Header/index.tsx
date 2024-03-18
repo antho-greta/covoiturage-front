@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
 import styled from 'styled-components'
 import colors from "../../utils/style/color.tsx";
 import {
@@ -33,11 +33,17 @@ const CenteredNavigationMenuList = styled(NavigationMenuList)`
 `
 
 function Header() {
+    const location = useLocation();
+
+    if(location.pathname === "/login") { //si l'utilisateur est sur la page de connexion, on ne lui affiche pas le header
+        return null;
+    }
+
     return (
         <NavigationMenu>
             <CenteredNavigationMenuList>
                 <NavigationMenuItem>
-                    <StyledLink to="/">Liste des Trajets</StyledLink>
+                    <StyledLink to="/allTrips">Liste des Trajets</StyledLink>
                     <StyledLink to="/searchTrips">Rechercher un Trajet</StyledLink>
                     <StyledLink to="/yourTrips">Vos Trajets</StyledLink>
                     <StyledLink to="/addTrip">Publier un Trajet</StyledLink>

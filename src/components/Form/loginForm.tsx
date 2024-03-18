@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {accountService} from "../../services/account.service";
-
+import {useNavigate} from "react-router-dom";
 
 interface LoginProps {
     username: string;
@@ -11,6 +11,7 @@ interface LoginProps {
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -19,7 +20,7 @@ function Login() {
             .then(res => {
                 console.log(res);
                 accountService.saveToken(res.data.token);
-
+                navigate('/allTrips');
             })
             .catch(err => console.log(err));
     };

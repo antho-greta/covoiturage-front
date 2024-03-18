@@ -1,11 +1,22 @@
 import Login from "../../components/Form/loginForm.tsx";
 import Page from "../../components/Page";
+import {Card} from "@/components/ui/card";
 
-function LoginPage(){
-    return(
+
+function LoginPage() {
+    return (
         <Page>
-            <h1>Connexion</h1>
-            <Login />
+            <Card>
+
+            </Card>
+            {/*<Card className="w-[350px]">*/}
+            {/*    <CardHeader>*/}
+            {/*        <CardTitle>Connexion</CardTitle>*/}
+            {/*    </CardHeader>*/}
+            {/*    <CardContent>*/}
+                    <Login/>
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
         </Page>
     )
 }

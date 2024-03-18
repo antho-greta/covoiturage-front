@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import {BrowserRouter as Router, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
 import AllTrips from './pages/AllTrips/Index.tsx'
 import SearchTrip from './pages/SearchTrip/Index.tsx'
 import YourTrips from './pages/YourTrips/Index.tsx'
@@ -23,9 +23,19 @@ const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     }
 `
 
-const AuthGuard = ({children}: {children: React.ReactNode}) => {
+const AuthGuard = ({children}: { children: React.ReactNode }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(()=> {
+        if (!accountService.isLogged()) {
+            navigate('/login');
+            return null;
+        }
+    }, [location]);
+
     if (!accountService.isLogged()) {
-        return <Login/>
+        return null;
     }
     return children
 };
@@ -34,16 +44,17 @@ const AuthGuard = ({children}: {children: React.ReactNode}) => {
 ReactDOM.render(
     <React.StrictMode>
         <Router>
-            <GlobalStyle />
-            <Header />
+            <GlobalStyle/>
+            <Header/>
             <Routes>
-                <Route path="/" element={<AuthGuard><AllTrips /></AuthGuard>} />
-                <Route path="/searchTrips" element={<AuthGuard><SearchTrip /></AuthGuard>} />
-                <Route path="/yourTrips" element={<AuthGuard><YourTrips /></AuthGuard>} />
-                <Route path="/addTrip" element={<AuthGuard><AddTrip /></AuthGuard>} />
-                <Route path="/account" element={<AuthGuard><Account /></AuthGuard>} />
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<Error />}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/allTrips" element={<AuthGuard><AllTrips/></AuthGuard>}/>
+                <Route path="/searchTrips" element={<AuthGuard><SearchTrip/></AuthGuard>}/>
+                <Route path="/yourTrips" element={<AuthGuard><YourTrips/></AuthGuard>}/>
+                <Route path="/addTrip" element={<AuthGuard><AddTrip/></AuthGuard>}/>
+                <Route path="/account" element={<AuthGuard><Account/></AuthGuard>}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="*" element={<Error/>}/>
             </Routes>
         </Router>
     </React.StrictMode>,

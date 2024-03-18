@@ -12,7 +12,10 @@ const logout = () => {
 
 const isLogged = () => {
     const token = localStorage.getItem('token');
-    return !!localStorage.getItem('token');
+    console.log('Token: ', token);
+    const logged = !!token;
+    console.log('Is logged: ', logged);
+    return logged;
 }
 
 export const accountService = {
