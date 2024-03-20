@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react'
 import ReactDOM from 'react-dom'
+import './index.css'
 import {BrowserRouter as Router, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
 import AllTrips from './pages/AllTrips/Index.tsx'
 import SearchTrip from './pages/SearchTrip/Index.tsx'
