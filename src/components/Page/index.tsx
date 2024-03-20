@@ -12,17 +12,15 @@ interface PageStyledProps {
 const PageStyled = styled.div<PageStyledProps>`
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0 auto;
-    padding: 20px;
     box-sizing: border-box;
 `
 
 function Page({children}: PageProps) {
     return (
-        <PageStyled>
+        <PageStyled className="bg-white">
             {children}
         </PageStyled>
     )

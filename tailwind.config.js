@@ -5,7 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        'bleuClair': '#B3DEE5',
+        'bleuClairHover': '#93dae7',
+        'bleuFonce': '#31525B',
+        'orange' : '#FFA101',
+        'beige': '#FAE6B1',
+        'customBackground': '#37524e',
+      }
+    },
   },
   plugins: [],
 }

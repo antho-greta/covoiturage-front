@@ -1,69 +1,17 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "properties": {
-    "style": {
-      "type": "string",
-      "enum": [
-        "default",
-        "new-york"
-      ]
-    },
-    "tailwind": {
-      "type": "object",
-      "properties": {
-        "config": {
-          "type": "string"
-        },
-        "css": {
-          "type": "string"
-        },
-        "baseColor": {
-          "type": "string"
-        },
-        "cssVariables": {
-          "type": "boolean"
-        },
-        "prefix": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "config",
-        "css",
-        "baseColor",
-        "cssVariables"
-      ]
-    },
-    "rsc": {
-      "type": "boolean"
-    },
-    "tsx": {
-      "type": "boolean"
-    },
-    "aliases": {
-      "type": "object",
-      "properties": {
-        "utils": {
-          "type": "string"
-        },
-        "components": {
-          "type": "string"
-        },
-        "ui": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "utils",
-        "components"
-      ]
-    }
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "app/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "prefix": ""
   },
-  "required": [
-    "style",
-    "tailwind",
-    "rsc",
-    "aliases"
-  ]
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
 }
