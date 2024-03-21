@@ -17,10 +17,10 @@ interface ProfileProps {
 // On définis le schema de validation
 const formSchema = z.object({
     login: z.string().min(2, {
-        message: "Un login possède au moins 2 charactères.",
+        message: "⬆ Un login possède au moins 2 charactères.",
     }),
     password: z.string().min(4, {
-        message: "Un mot de passe possède au moins 4 charactères.",
+        message: "⬆ Un mot de passe possède au moins 4 charactères.",
     }),
 })
 
