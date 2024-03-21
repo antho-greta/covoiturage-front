@@ -2,7 +2,7 @@ import Page from '../../components/Page/index.tsx';
 import {accountService} from "@/services/account.service.tsx";
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {Card, CardContent, CardFooter, CardTitle} from "@/components/ui/card.tsx";
+import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import {Link} from 'react-router-dom';
@@ -36,13 +36,14 @@ function AllTrips() {
 
     return (
         <Page>
-            <div className="w-full pt-3 rounded-none w-[80%] h-[100%] cursor-pointer text-center">
+            <div className="pt-3 rounded-none w-[80%] h-[100%] cursor-pointer text-center">
                 <h1 className="p-2">Liste des Trajets</h1>
                 {data && data.map((trip, index) => {
                     if (index === 0) return null; // On ne prend pas en compte le premier élément du tableau qui est vide
                     return (
                         <Link to={`/reservation/${trip.id}`} key={index}>
-                            <Card key={index} className="w-full rounded-none border-none my-1 bg-bleuClair hover:bg-bleuClairHover transition-colors duration-200">
+                            <Card key={index}
+                                  className="w-full rounded-none border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
                                 <CardContent className="flex justify-between pl-4 pr-4">
                                     <div>
                                         <span>{trip["ville de départ"]}  </span>
@@ -54,7 +55,7 @@ function AllTrips() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="justify-start pl-4">
-                                    <span className="text-gray-500">{trip["date du trajet"]}</span>
+                                    <span className="text-gray-400">{trip["date du trajet"]}</span>
                                 </CardFooter>
                             </Card>
                         </Link>

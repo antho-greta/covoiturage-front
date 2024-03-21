@@ -3,7 +3,7 @@ import ProfileForm from "@/components/Form/loginForm.tsx"
 
 function LoginPage() {
     return (
-        <Page>
+        <Page className="justify-center">
             <ProfileForm/>
         </Page>
 
