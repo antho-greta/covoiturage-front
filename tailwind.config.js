@@ -8,7 +8,7 @@ export default {
     extend: {
       colors:{
         'bleuClair': '#B3DEE5',
-        'bleuClairHover': '#93dae7',
+        'bleuClairHover': '#6ccce0',
         'bleuFonce': '#31525B',
         'orange' : '#FFA101',
         'beige': '#FAE6B1',

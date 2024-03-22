@@ -7,10 +7,12 @@ import {
 import {navigationMenuTriggerStyle} from "@/components/ui/navigation-menu.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faList, faPlus, faRoad, faSearch, faUser} from "@fortawesome/free-solid-svg-icons";
+import {accountService} from "@/services/account.service.tsx";
 
 function Header() {
     const location = useLocation();
-    if(location.pathname === "/login") { //si l'utilisateur est sur la page de connexion, on ne lui affiche pas le header
+
+    if(location.pathname === "/login" || !accountService.isLogged()) {
         return null;
     }
 
@@ -20,7 +22,7 @@ function Header() {
                 <NavigationMenuItem>
                     <Link to="/allTrips">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            <FontAwesomeIcon icon={faList} />Liste des Trajets
+                            <FontAwesomeIcon icon={faList}  />Liste des Trajets
                         </NavigationMenuLink>
                     </Link>
                     <Link to="/searchTrips">
@@ -30,7 +32,7 @@ function Header() {
                     </Link>
                     <Link to="/yourTrips">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            <FontAwesomeIcon icon={faRoad} /> Vos Trajets
+                            <FontAwesomeIcon icon={faRoad} />Vos Trajets
                         </NavigationMenuLink>
                     </Link>
                     <Link to="/addTrip">

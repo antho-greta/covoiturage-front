@@ -43,7 +43,7 @@ function AllTrips() {
                     return (
                         <Link to={`/reservation/${trip.id}`} key={index}>
                             <Card key={index}
-                                  className="w-full rounded-none border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
+                                  className="w-full border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
                                 <CardContent className="flex justify-between pl-4 pr-4">
                                     <div>
                                         <span>{trip["ville de départ"]}  </span>

@@ -43,7 +43,7 @@ function ProfileForm() {
             .then(res => {
                 console.log(res.data);
                 accountService.saveToken(res.data.token);
-                navigate('/allTrips');
+                navigate('/');
             })
             .catch(err => console.log("Error from server: ", err));
     };

@@ -181,7 +181,7 @@ function Account() {
                     <CardFooter className="flex-col">
                         <div className="flex justify-center mt-2">
                             <Button className="text-white m-1" onClick={handleOpenModal}>Modifier</Button>
-                            <Button className="text-white m-1" onClick={(logout)}>Se déconnecter</Button>
+                            <Button className="text-white m-1 hover:bg-orange" onClick={(logout)}>Se déconnecter</Button>
                         </div>
                     </CardFooter>
                 </Card>

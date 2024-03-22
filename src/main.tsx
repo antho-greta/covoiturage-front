@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import {BrowserRouter as Router, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
+import {BrowserRouter as Router, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom'
 import AllTrips from './pages/AllTrips/Index.tsx'
 import SearchTrip from './pages/SearchTrip/Index.tsx'
 import YourTrips from './pages/YourTrips/Index.tsx'
@@ -31,7 +31,6 @@ const AuthGuard = ({children}: { children: React.ReactNode }) => {
     useEffect(()=> {
         if (!accountService.isLogged()) {
             navigate('/login');
-            return null;
         }
     }, [location]);
 
@@ -48,6 +47,7 @@ ReactDOM.render(
             <GlobalStyle/>
             <Header/>
             <Routes>
+                <Route path="/" element={<Navigate to="/allTrips" replace />} />
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/allTrips" element={<AuthGuard><AllTrips/></AuthGuard>}/>
                 <Route path="/searchTrips" element={<AuthGuard><SearchTrip/></AuthGuard>}/>
