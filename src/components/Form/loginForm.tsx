@@ -51,11 +51,11 @@ function ProfileForm() {
     return(
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmitLoginForm)} className="space-y-8">
-                    <Card className="w-[500px] h-auto">
-                        <CardHeader>
+                    <Card className="w-[700px] h-auto justify-center items-center flex flex-col">
+                        <CardHeader className="w-full">
                             <CardTitle>Authentification</CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="w-[600px] justify-center items-center flex flex-col">
                             <FormField
                                 control={form.control}
                                 name= "login"
@@ -73,7 +73,7 @@ function ProfileForm() {
                                 control={form.control}
                                 name="password"
                                 render={({field}) => (
-                                    <FormItem>
+                                    <FormItem className="mt-8">
                                         <FormLabel>Password</FormLabel>
                                         <FormControl>
                                             <Input {...field} type="password" placeholder="password"/>
@@ -84,7 +84,7 @@ function ProfileForm() {
                             />
                         </CardContent>
                         <CardFooter>
-                            <Button type="submit">Connexion</Button>
+                            <Button type="submit" className="mt-4">Connexion</Button>
                         </CardFooter>
                     </Card>
                 </form>

@@ -101,7 +101,7 @@ function Account() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            prenom: personData?.prenom || "",
+            prenom: personData?.prenom || "", // On utilise l'opérateur nullish pour éviter les erreurs si personData est null
             nom: personData?.nom || "",
             telephone: personData?.telephone || "",
             email: personData?.email || "",
@@ -188,8 +188,8 @@ function Account() {
 
                 <Modal isOpen={isModalOpen} handleClose={handleClose}>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleSubmitProfilForm)} className="space-y-8">
-                            <h2>Modifier vos informations</h2>
+                        <form onSubmit={form.handleSubmit(handleSubmitProfilForm)} className="space-y-8 text-left">
+                            <h2 className="text-center text-white">Modifier vos informations</h2>
                             <FormField
                                 control={form.control}
                                 name="prenom"
@@ -197,7 +197,7 @@ function Account() {
                                     <FormItem>
                                         <FormLabel>Prénom</FormLabel>
                                         <FormControl>
-                                            <Input {...field} type="text" defaultValue={personData?.prenom}/>
+                                            <Input {...field} type="text" placeholder="Prénom"/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
