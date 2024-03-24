@@ -11,13 +11,15 @@ interface ModalProps {
 function Modal({children, isOpen, handleClose}: ModalProps) {
     return (
         <div id="static-modal" data-modal-backdrop="static"  aria-hidden="true"
-             className={`flex items-center justify-center overflow-y-auto overflow-x-hidden fixed inset-0 z-50
+             className={`flex items-center justify-center justify-center overflow-y-auto 
+             overflow-x-hidden  fixed inset-0 z-50
               ${isOpen ? 'block' : 'hidden'}`}
              onClick={handleClose}
         >
             {isOpen && <div className="fixed inset-0 bg-black opacity-50"></div>}
-            <div className="relative p-4 w-full max-w-2xl max-h-[500px]" onClick={(e) => e.stopPropagation()}>
-                <div className="relative bg-white rounded-lg shadow dark:bg-bleuFonce">
+            <div className="p-4 w-[50vw] h-[50vh] max-w-2xl rounded-xl"
+                 onClick={(e) => e.stopPropagation()}>
+                <div className="relative bg-white shadow dark:bg-bleuFonce">
                     <div>
                         <Button className="absolute top-4 right-4" onClick={handleClose}><FontAwesomeIcon
                             icon={faClose}/></Button>
@@ -30,4 +32,5 @@ function Modal({children, isOpen, handleClose}: ModalProps) {
         </div>
     )
 }
+
 export default Modal;

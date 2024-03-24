@@ -60,13 +60,14 @@ function Account() {
     const logout = useLogout();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [personId, setPersonId] = useState(0);
+    const [isDataLoaded, setIsDataLoaded] = useState(false); // sert à vérifier si les données on été chargées
     const handleOpenModal = (() => {
         setIsModalOpen(true);
     });
     const handleClose = (() => {
         setIsModalOpen(false);
+        setIsDataLoaded(false);
     });
-
 
     /**
      * On récupère les informations de l'utilisateur connecté (et ça voiture)
@@ -93,12 +94,26 @@ function Account() {
             })
             .then((response) => setCarData(response.data))
             .catch((error) => console.log(error))
-    }, [])
 
-    /**
-     * On définis le schema de validation
-     */
-    const form = useForm<z.infer<typeof formSchema>>({
+
+        /**
+         * On définis le schema de validation
+         */
+        if(!isDataLoaded){
+            form.reset({
+                prenom: personData?.prenom || "", // On utilise l'opérateur nullish pour éviter les erreurs si personData est null
+                nom: personData?.nom || "",
+                telephone: personData?.telephone || "",
+                email: personData?.email || "",
+                ville: personData?.ville || "",
+                cdp: personData?.cdp || "",
+            });
+            setIsDataLoaded(true);
+        }
+
+    }, [personData, isDataLoaded]);
+
+    const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             prenom: personData?.prenom || "", // On utilise l'opérateur nullish pour éviter les erreurs si personData est null
@@ -181,7 +196,8 @@ function Account() {
                     <CardFooter className="flex-col">
                         <div className="flex justify-center mt-2">
                             <Button className="text-white m-1" onClick={handleOpenModal}>Modifier</Button>
-                            <Button className="text-white m-1 hover:bg-orange" onClick={(logout)}>Se déconnecter</Button>
+                            <Button className="text-white m-1 hover:bg-orange" onClick={(logout)}>Se
+                                déconnecter</Button>
                         </div>
                     </CardFooter>
                 </Card>
@@ -195,9 +211,9 @@ function Account() {
                                 name="prenom"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Prénom</FormLabel>
+                                        <FormLabel>Nom</FormLabel>
                                         <FormControl>
-                                            <Input {...field} type="text" placeholder="Prénom"/>
+                                            <Input {...field} type="text" placeholder="Nom"/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -208,9 +224,9 @@ function Account() {
                                 name="nom"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Nom</FormLabel>
+                                        <FormLabel>Prénom</FormLabel>
                                         <FormControl>
-                                            <Input {...field} type="text" placeholder="Nom"/>
+                                            <Input {...field} type="text" placeholder="Prénom"/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -270,8 +286,18 @@ function Account() {
                             />
                             {/*// TODO : Ajouter la modification de la voiture*/}
                             <div className="w-full bg-bleuFonce flex justify-around items-center h-[50px]">
-                            <Button type="submit">Valider</Button>
-                            <Button onClick={() => form.reset()}>Effacer</Button>
+                                <Button className={"text-white"} type="submit">Valider</Button>
+                                <Button className={"hover:bg-orange text-white"} type="button" onClick={() => {
+                                    form.reset({
+                                        prenom: "",
+                                        nom: "",
+                                        telephone: "",
+                                        email: "",
+                                        ville: "",
+                                        cdp: "",
+                                    });
+                                    setIsDataLoaded(true);
+                                }}>Effacer</Button>
                             </div>
                         </form>
                     </Form>

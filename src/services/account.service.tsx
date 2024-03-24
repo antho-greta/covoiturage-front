@@ -1,8 +1,8 @@
 // Fichier pour les services de gestion de compte
 // On peut transéferer facilement le token d'un composant à un autre
 // On peut aussi vérifier si l'utilisateur est connecté
-import {useNavigate} from "react-router-dom";
-import {useCallback} from "react";
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /*
  * Fonction pour déconnecter l'utilisateur
