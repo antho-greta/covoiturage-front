@@ -13,6 +13,8 @@ import Error from "./components/Error.tsx";
 import Header from './components/Header'
 import {createGlobalStyle} from "styled-components";
 import {accountService} from "./services/account.service.tsx";
+import {Switch} from "@radix-ui/react-switch";
+import TripDetails from "@/pages/Trip";
 
 interface GlobalStyleProps {
     className?: string
@@ -55,6 +57,7 @@ ReactDOM.render(
                 <Route path="/addTrip" element={<AuthGuard><AddTrip/></AuthGuard>}/>
                 <Route path="/account" element={<AuthGuard><Account/></AuthGuard>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/trip/:id" element={<AuthGuard><TripDetails/></AuthGuard>}/>
                 <Route path="*" element={<Error/>}/>
             </Routes>
         </Router>

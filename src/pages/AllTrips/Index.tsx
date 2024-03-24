@@ -41,7 +41,7 @@ function AllTrips() {
                 {data && data.map((trip, index) => {
                     if (index === 0) return null; // On ne prend pas en compte le premier élément du tableau qui est vide
                     return (
-                        <Link to={`/reservation/${trip.id}`} key={index}>
+                        <Link to={`/trip/${trip.id}`} key={index}>
                             <Card key={index}
                                   className="w-full border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
                                 <CardContent className="flex justify-between pl-4 pr-4">
