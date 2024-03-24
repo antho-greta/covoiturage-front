@@ -68,11 +68,13 @@ function Account() {
         setIsModalOpen(false);
         setIsDataLoaded(false);
     });
+    const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
 
     /**
      * On récupère les informations de l'utilisateur connecté (et ça voiture)
      */
     useEffect(() => {
+        if(!isInitialDataLoaded) {
         const token = accountService.isLogged() ? localStorage.getItem('token') : '';
         axios({
             method: 'get',
@@ -84,7 +86,7 @@ function Account() {
             .then((response) => {
                 setPersonData(response.data);
                 setPersonId(response.data.id);
-                return axios({
+                return axios ({
                     method: 'get',
                     url: `http://localhost:8000/api/car/selectCar/${response.data.id}`,
                     headers: {
@@ -94,11 +96,9 @@ function Account() {
             })
             .then((response) => setCarData(response.data))
             .catch((error) => console.log(error))
+            setIsInitialDataLoaded(true);
+        }
 
-
-        /**
-         * On définis le schema de validation
-         */
         if(!isDataLoaded){
             form.reset({
                 prenom: personData?.prenom || "", // On utilise l'opérateur nullish pour éviter les erreurs si personData est null
@@ -111,8 +111,11 @@ function Account() {
             setIsDataLoaded(true);
         }
 
-    }, [personData, isDataLoaded]);
+    }, [personData, isDataLoaded, isInitialDataLoaded]);
 
+    /**
+     * On définis le schema de validation
+     */
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
