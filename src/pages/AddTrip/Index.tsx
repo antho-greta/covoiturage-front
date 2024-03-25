@@ -1,230 +1,174 @@
-import Page from "../../components/Page";
-import {Card, CardContent} from "@/components/ui/card.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {accountService} from "@/services/account.service.tsx";
+import Page from "@/components/Page";
+import {accountService} from "@/services/account.service";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {Button} from "@/components/ui/button.tsx";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select"
+import {Card} from "@/components/ui/card.tsx";
 
-
-interface Trajet {
-    depart: string;
-    arrivee: string;
-    date: string;
-    distance: string;
-}
-
-interface Person {
+type City = {
     id: number;
-    login: string;
-    prenom: string;
-    nom: string;
-    telephone: string;
-    email: string;
-    ville: string;
-    cdp: string;
+    cityName: string;
+};
+
+type Trip = {
+    idTrip: number;
+    idCityDepart: number;
+    idCityArrivee: number;
+    personData: string;
+    idPerson: number;
+    killometers: string;
 }
-
-const formSchema = z.object({
-    depart: z.string().min(0, {
-        message: "⬆ veuillez sélectionné une ville de départ",
-    }),
-    arrivee: z.string().min(0, {
-        message: "⬆ veuillez sélectionné une ville d'arrivée",
-    }),
-    date: z.date().refine(date => !isNaN(date.getTime()), {
-        message: "⬆ veuillez sélectionné une date de départ",
-    }),
-    distance: z.string().min(1, {
-        message: "⬆ veuillez renseigner une distance en kilomètre",
-    })
-})
-
 
 function AddTrip() {
-    const [data, setData] = useState<Trajet[] | null>(null);
-    const [cities, setCities] = useState<string[] | null>(null);
-    const [personData, setPersonData] = useState<Person | null>(null);
+    const [cities, setCities] = useState<City[] | null>(null);
+    const [startDate, setStartDate] = useState(new Date());
+    const [idCityDepart, setIdCityDepart] = useState(0);
+    const [idCityArrivee, setIdCityArrivee] = useState(0);
+    const [personData, setPersonData] = useState([]);
     const [personId, setPersonId] = useState(0);
+    const [killometers, setKillometers] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+        const token = accountService.isLogged() ? localStorage.getItem("token") : "";
         axios({
-            method: 'get',
+            method: "get",
             url: `http://localhost:8000/api/person/info`,
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
+        }).then((response) => {
+            console.log(response);
+            setPersonData(response.data);
+            setPersonId(response.data.id);
         })
-            .then((response) => {
-                setPersonData(response.data);
-                setPersonId(response.data.id);
-                return axios({
-                    method: 'get',
-                    url: `http://localhost:8000/api/city/listCity`,
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-            })
-            .then((response) => setCities(response.data))
-            .catch((error) => console.log(error))
+        axios({
+            method: "get",
+            url: `http://localhost:8000/api/city/listCity`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then((response) => {
+            console.log(response.data)
+            setCities(response.data);
+        })
+            .catch((error) => {
+                console.log(error);
+            });
     }, []);
 
-    /**
-     * On définis le schema de validation
-     */
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            depart: "",
-            arrivee: "",
-            date: "",
-            distance: "",
-        },
-    });
 
-    const renderDatePicker = (field: any) => (
-        <DatePicker
-            {...field}
-            selected={field.value}
-            onChange={(date) => field.onChange(date)}
-            showTimeSelect
-            timeFormat="HH:mm"
-            timeIntervals={15}
-            dateFormat="yyyy-MM-dd'T'HH:mm"
-        />
-    );
+    useEffect(() => {
+        setError(null);
+    }, [idCityDepart, idCityArrivee]);
 
-    const handleSubmitProfilForm = async (data: z.infer<typeof formSchema>) => {
-        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
-        console.log("Formulaire soumis avec succès ! Données :", data);
-        axios.post('http://localhost:8000/api/trip/createTrip', {
+
+    const handleSubmit = () => {
+        if (idCityArrivee === 0 || idCityDepart === 0) {
+            setError("Veuillez choisir une ville d'arrivée et de départ !")
+        }
+        if (idCityArrivee === idCityDepart) {
+            setError("La ville de départ et d'arrivée ne peuvent pas être les mêmes");
+        }
+        if (killometers === "") {
+            setError("Veuillez renseigner le nombre de kilomètres");
+        }
+        const tripData = {
             idToDrive: personId,
-            idToStartCity: data.depart,
-            idToEndCity: data.arrivee,
-            dateTrip: data.date.toISOString().slice(0, 16),
-            killometers: parseFloat(data.distance)
-        }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(res => {
-                console.log(res.data);
-                setData(res.data);
-                alert("Votre trajet à bien été publié !");
+            idToStartCity: idCityDepart,
+            idToEndCity: idCityArrivee,
+            killometers: killometers,
+            dateTrip: new Date(startDate).toISOString().slice(0, 19).replace('T', ' '),
+        };
+        console.log(tripData)
+        axios.post("http://localhost/api/trip/createTrip", tripData)
+            .then((response) => {
+                console.log("données envoyées: ", tripData);
+                console.log(response.data);
+                alert("Trajet ajouté avec succès");
             })
-            .catch(err => console.log("Error from server: ", err));
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     return (
         <Page>
-            <div className="pt-3 rounded-none w-[80%] text-center">
-                <div className="flex justify-center mb-4">
-                    <h1>Publier un Trajet</h1>
-                </div>
-                <Card>
-                    <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(handleSubmitProfilForm)} className="space-y-8 text-left">
-                                <FormField
-                                    control={form.control}
-                                    name="depart"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Ville de départ</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Choisissez une ville de départ"/>
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {cities && cities.map((city, index) => (
-                                                        <SelectItem key={index}
-                                                                    value={city.id}>{city.cityName}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="arrivee"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Ville d'arrivée</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Choisissez une ville de départ"/>
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {cities && cities.map((city, index) => (
-                                                        <SelectItem key={index}
-                                                                    value={city.id}>{city.cityName}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="date"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Date de départ</FormLabel>
-                                            <FormControl>
-                                                {renderDatePicker(field)}
-                                            </FormControl>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="distance"
-                                    render={({field}) => (
-                                        <FormItem>
-                                            <FormLabel>Distance en kilomètre</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} type="text" placeholder="Distance en kilomètres"/>
-                                            </FormControl>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="w-full bg-bleuFonce flex justify-around items-center h-[50px]">
-                                    <Button className={"text-white"} type="submit">Valider</Button>
-                                    <Button className={"hover:bg-orange text-white"} type="button" onClick={() => {
-                                        form.reset({
-                                            depart: "",
-                                            arrivee: "",
-                                            date: "",
-                                            distance: "",
-                                        });
-                                    }}>Effacer</Button>
-                                </div>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-            </div>
+            <Card>
+                {error ? error : null}
+                <form onSubmit={(e) => {
+                    e.preventDefault()
+                    handleSubmit()
+                }}>
+                    <Select onValueChange={(value: string) => setIdCityDepart(parseInt(value))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choisissez une ville de départ"/>
+                        </SelectTrigger>
+                        <SelectContent className="m-2">
+                            <SelectGroup>
+                                <SelectLabel>Villes de départ</SelectLabel>
+                                {
+                                    cities?.map((city) => (
+                                        city && city.id &&
+                                        <SelectItem key={city?.id} value={city?.id.toString()}>
+                                            {city?.cityName}
+                                        </SelectItem>
+                                    ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        onValueChange={(value: string) => setIdCityArrivee(parseInt(value))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choisissez une ville de d'arrivée"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Villes d'arrivée</SelectLabel>
+                                {
+                                    cities?.map((city) => (
+                                        city && city.id &&
+                                        <SelectItem key={city?.id} value={city?.id.toString()}>
+                                            {city?.cityName}
+                                        </SelectItem>
+                                    ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <label>Date du départ
+                        <DatePicker
+                            selected={startDate}
+                            onChange={(date: Date) => setStartDate(date)}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            dateFormat="yyyy-MM-dd'T'HH:mm"
+                        />
+                    </label>
+
+                    <label>
+                        Nombre de kilomètres
+                        <input type="number" value={killometers} onChange={(e) => setKillometers(e.target.value)}/>
+                    </label>
+
+                    <Button type="submit">Soumettre</Button>
+                </form>
+            </Card>
         </Page>
-    )
+    );
 }
 
-export default AddTrip
+export default AddTrip;

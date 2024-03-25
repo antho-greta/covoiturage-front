@@ -288,7 +288,9 @@ function Account() {
                                 )}
                             />
                             {/*// TODO : Ajouter la modification de la voiture*/}
-                            <div className="w-full bg-bleuFonce flex justify-around items-center h-[50px]">
+                            <div
+                                className="w-full bg-bleuFonce flex justify-around items-center h-[50px]"
+                            >
                                 <Button className={"text-white"} type="submit">Valider</Button>
                                 <Button className={"hover:bg-orange text-white"} type="button" onClick={() => {
                                     form.reset({
