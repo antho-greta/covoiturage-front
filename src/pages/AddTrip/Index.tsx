@@ -49,7 +49,6 @@ function AddTrip() {
                 Authorization: `Bearer ${token}`,
             },
         }).then((response) => {
-            console.log(response);
             setPersonData(response.data);
             setPersonId(response.data.id);
         })
@@ -68,13 +67,13 @@ function AddTrip() {
             });
     }, []);
 
-
     useEffect(() => {
         setError(null);
     }, [idCityDepart, idCityArrivee]);
 
-
     const handleSubmit = () => {
+        const token = accountService.isLogged() ? localStorage.getItem("token") : "";
+
         if (idCityArrivee === 0 || idCityDepart === 0) {
             setError("Veuillez choisir une ville d'arrivée et de départ !")
         }
@@ -88,13 +87,19 @@ function AddTrip() {
             idToDrive: personId,
             idToStartCity: idCityDepart,
             idToEndCity: idCityArrivee,
-            killometers: killometers,
+            killometers: parseInt(killometers),
             dateTrip: new Date(startDate).toISOString().slice(0, 19).replace('T', ' '),
         };
+        console.log("données stockées en mémoire")
         console.log(tripData)
-        axios.post("http://localhost/api/trip/createTrip", tripData)
+        axios.post("http://localhost:8000/api/trip/createTrip", tripData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then((response) => {
                 console.log("données envoyées: ", tripData);
+                console.log("données envoyées")
                 console.log(response.data);
                 alert("Trajet ajouté avec succès");
             })

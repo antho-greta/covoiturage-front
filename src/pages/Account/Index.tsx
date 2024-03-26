@@ -58,48 +58,61 @@ function Account() {
     const [personData, setPersonData] = useState<Person | null>(null);
     const [carData, setCarData] = useState<Car | null>(null);
     const logout = useLogout();
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [personId, setPersonId] = useState(0);
     const [isDataLoaded, setIsDataLoaded] = useState(false); // sert à vérifier si les données on été chargées
+    const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
+    /**
+     * modal pour modifier les informations de l'utilisateur
+     */
+    const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
     const handleOpenModal = (() => {
-        setIsModalOpen(true);
+        setIsPersonModalOpen(true);
     });
-    const handleClose = (() => {
-        setIsModalOpen(false);
+    const handleClosePerson = (() => {
+        setIsPersonModalOpen(false);
         setIsDataLoaded(false);
     });
-    const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
+    const handleCloseCar = (() => {
+        setIsCarModalOpen(false);
+    });
+    /**
+     * modal pour modifier les informations de la voiture
+     */
+    const [isCarModalOpen, setIsCarModalOpen] = useState(false);
+    const handleOpenCarModal = (() => {
+        setIsCarModalOpen(true);
+    });
 
     /**
      * On récupère les informations de l'utilisateur connecté (et ça voiture)
      */
     useEffect(() => {
-        if(!isInitialDataLoaded) {
-        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
-        axios({
-            method: 'get',
-            url: 'http://localhost:8000/api/person/info',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then((response) => {
-                setPersonData(response.data);
-                setPersonId(response.data.id);
-                return axios ({
-                    method: 'get',
-                    url: `http://localhost:8000/api/car/selectCar/${response.data.id}`,
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
+        if (!isInitialDataLoaded) {
+            const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+            axios({
+                method: 'get',
+                url: 'http://localhost:8000/api/person/info',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
-            .then((response) => setCarData(response.data))
-            .catch((error) => console.log(error))
+                .then((response) => {
+                    setPersonData(response.data);
+                    setPersonId(response.data.id);
+                    return axios({
+                        method: 'get',
+                        url: `http://localhost:8000/api/car/selectCar/${response.data.id}`,
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                })
+                .then((response) => setCarData(response.data))
+                .catch((error) => console.log(error))
             setIsInitialDataLoaded(true);
         }
 
-        if(!isDataLoaded){
+        if (!isDataLoaded) {
             form.reset({
                 prenom: personData?.prenom || "", // On utilise l'opérateur nullish pour éviter les erreurs si personData est null
                 nom: personData?.nom || "",
@@ -156,7 +169,6 @@ function Account() {
             .catch(err => console.log("Error from server: ", err));
     };
 
-
     return (
         <Page>
             <div className="pt-3 rounded-none w-[80%] text-center">
@@ -184,14 +196,15 @@ function Account() {
                             )}
                         </div>
                         {carData && (
-                            <div className="border-l pl-2 text-left">
+                            <div className="border-l pl-2 text-left bg-bleuClair rounded hover:bg-orange"
+                                 onClick={handleOpenCarModal}>
                                 <div className="text-center border-b">
                                     <h2>Mon véhicule</h2>
                                 </div>
                                 <div className="pt-2 flex flex-col justify-between md:h-[75%]">
                                     <p>Modèle de voiture : {carData.marque} {carData.modele}</p>
                                     <p>Immatriculation du véhicule : {carData.immatriculation}</p>
-                                    <p>Nombre de place{carData["nombre de places"]}</p>
+                                    <p>Nombre de place maximum : <span>{carData["nombre de places"]}</span></p>
                                 </div>
                             </div>
                         )}
@@ -205,7 +218,7 @@ function Account() {
                     </CardFooter>
                 </Card>
 
-                <Modal isOpen={isModalOpen} handleClose={handleClose}>
+                <Modal isOpen={isPersonModalOpen} handleClose={handleClosePerson}>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleSubmitProfilForm)} className="space-y-8 text-left">
                             <h2 className="text-center text-white">Modifier vos informations</h2>
@@ -306,6 +319,13 @@ function Account() {
                             </div>
                         </form>
                     </Form>
+                </Modal>
+
+                <Modal isOpen={isCarModalOpen} handleClose={handleCloseCar}>
+                    <h2 className="text-center text-white">Modifier votre véhicule</h2>
+                    <div className="flex justify-center">
+                        <Button className="text-white m-1 hover:bg-orange">Modifier</Button>
+                    </div>
                 </Modal>
 
             </div>

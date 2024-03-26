@@ -6,6 +6,8 @@ import {Link} from "react-router-dom";
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import Modal from "@/components/Modal";
+import {Button} from "@/components/ui/button.tsx";
 
 interface Trip {
     id: number;
@@ -17,6 +19,7 @@ interface Trip {
     "nombre de place disponobles": number;
     "date du trajet": string;
 }
+
 interface Person {
     id: number;
     login: string;
@@ -28,10 +31,20 @@ interface Person {
     cdp: string;
 }
 
-function YourTrips(){
+function YourTrips() {
     const [personData, setPersonData] = useState<Person | null>(null);
     const [personId, setPersonId] = useState(0);
     const [data, setData] = useState<Trip[] | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+    const handleOpenModal = ((trip: Trip) => {
+        setSelectedTrip(trip);
+        setIsModalOpen(true);
+    });
+    const handleCloseModal = (() => {
+        setIsModalOpen(false);
+    });
+
     /**
      * On récupère les informations de l'utilisateur connecté et ses différents trajets
      */
@@ -44,6 +57,9 @@ function YourTrips(){
                 'Authorization': `Bearer ${token}`
             }
         })
+            /**
+             * On récupère les trajets en tant que conducteur
+             */
             .then((response) => {
                 setPersonData(response.data);
                 setPersonId(response.data.id);
@@ -55,10 +71,37 @@ function YourTrips(){
                     }
                 })
             })
+            /**
+             * On récupère les trajets en tant que passagé
+             */
+            .then((response) => {
+                setData(response.data);
+                return axios({
+                    method: 'get',
+                    url: `http://localhost:8000/api/trip/passenger/myTrips`,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+            })
             .then((response) => setData(response.data))
             .catch((error) => console.log(error))
     }, [])
 
+    const handleDelete = (id: number) => {
+        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+        axios({
+            method: 'delete',
+            url: `http://localhost:8000/api/trip/deleteTrip/${id}`,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(() => {
+                setData(data?.filter((trip: Trip) => trip.id !== id))
+            })
+            .catch((error) => console.log(error))
+    }
 
     return (
         <Page>
@@ -67,7 +110,7 @@ function YourTrips(){
                 {data && data.map((trip, index) => {
                     if (index === 0) return null; // On ne prend pas en compte le premier élément du tableau qui est vide
                     return (
-                        <Link to={`/reservation/${trip.id}`} key={index}>
+                        <div onClick={() => handleOpenModal(trip)} key={index}>
                             <Card key={index}
                                   className="w-full border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
                                 <CardContent className="flex justify-between pl-4 pr-4">
@@ -84,10 +127,23 @@ function YourTrips(){
                                     <span className="text-gray-400">{trip["date du trajet"]}</span>
                                 </CardFooter>
                             </Card>
-                        </Link>
+                        </div>
                     )
                 })}
             </div>
+            <Modal isOpen={isModalOpen} handleClose={handleCloseModal}>
+                <h2>Détails du Trajet</h2>
+                {selectedTrip && (
+                    <div>
+                        <p>Conducteur : {selectedTrip["prénom du conducteur"]}</p>
+                        <p>Ville de départ : {selectedTrip["ville de départ"]}</p>
+                        <p>Ville d'arrivée : {selectedTrip["ville d'arrivée"]}</p>
+                        <p>Distance : {selectedTrip["distance en kilometres"]}</p>
+                        <p>Date : {selectedTrip["date du trajet"]}</p>
+                        <Button onClick={() => handleDelete(selectedTrip.id)}>Supprimer</Button>
+                    </div>
+                )}
+            </Modal>
         </Page>
     )
 }

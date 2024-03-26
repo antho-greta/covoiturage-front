@@ -41,6 +41,9 @@ function ProfileForm() {
         console.log("Formulaire soumis avec succès ! Données :", data);
         axios.post('http://localhost:8000/api/login_check', {username: data.login, password: data.password})
             .then(res => {
+                console.log("Réponse de l'API lors de la connexion :", res.data);
+                const idRegister = res.data.id;
+                accountService.saveIdRegister(idRegister);
                 console.log(res.data);
                 accountService.saveToken(res.data.token);
                 navigate('/');

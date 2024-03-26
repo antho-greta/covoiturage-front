@@ -23,6 +23,15 @@ const saveToken = (token: string) => {
     localStorage.setItem('token', token);
 }
 
+const saveIdRegister = (idRegister: string) => {
+    if (idRegister) {
+        localStorage.setItem('idRegister', idRegister);
+        console.log("idRegister sauvegardé dans le localStorage :", idRegister);
+    } else {
+        console.log("Erreur : idRegister est undefined ou null.");
+    }
+}
+
 /*
  * Fonction pour vérifier si l'utilisateur est connecté
  */
@@ -38,5 +47,5 @@ const isLogged = () => {
  * Export des fonctions
 */
 export const accountService = {
-    saveToken, isLogged
+    saveToken, isLogged, saveIdRegister
 };
