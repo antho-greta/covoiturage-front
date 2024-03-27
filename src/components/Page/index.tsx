@@ -17,6 +17,7 @@ const PageStyled = styled.div<PageStyledProps>`
     height: 100vh;
     margin: 0 auto;
     box-sizing: border-box;
+    background-color: #486c7e;
 `
 
 /*

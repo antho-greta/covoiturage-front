@@ -61,6 +61,76 @@ function Account() {
     const [personId, setPersonId] = useState(0);
     const [isDataLoaded, setIsDataLoaded] = useState(false); // sert à vérifier si les données on été chargées
     const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
+
+    //------------------constante pour la création d'une voitures------------------
+    const [isCarModalOpen, setIsCarModalOpen] = useState(false);
+    const [brand, setBrand] = useState<string>('');
+    const [model, setModel] = useState<string>('');
+    const [numberOfSeats, setNumberOfSeats] = useState<number>(0);
+    const [registrationNumber, setRegistrationNumber] = useState<string>('');
+
+    /**
+     * modal pour créer une voiture
+     */
+    const handleOpenCarModal = (() => {
+        setIsCarModalOpen(true);
+    });
+
+    /**
+     * Méthode pour créer une voiture
+     */
+    const handleCreateCar = () => {
+        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+        console.log(brand)
+        axios({
+            method: 'post',
+            url: `http://localhost:8000/api/voiture/creerVoiture/${personId}/${brand}/${model}/${numberOfSeats}/${registrationNumber}`,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+                setCarData(response.data);
+                alert("Votre voiture a bien été ajoutée");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    /**
+     * modal pour supprimer la voiture
+     */
+    const [isCarModalDelete, setIsCarModalDelete] = useState(false);
+    const handleOpenCarModalDelete = (() => {
+        setIsCarModalDelete(true);
+    });
+
+    /**
+     * Méthode pour supprimer une voiture
+     * @param carId
+     */
+    const handleDeleteCar = (carId: number) => {
+        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+        axios({
+            method: 'delete',
+            url: `http://localhost:8000/api/car/deleteCar/${carId}`,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+                alert("Votre voiture a bien été supprimée");
+                // Mettre à jour l'état de la voiture ici si nécessaire
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+
     /**
      * modal pour modifier les informations de l'utilisateur
      */
@@ -73,14 +143,13 @@ function Account() {
         setIsDataLoaded(false);
     });
     const handleCloseCar = (() => {
-        setIsCarModalOpen(false);
-    });
-    /**
-     * modal pour modifier les informations de la voiture
-     */
-    const [isCarModalOpen, setIsCarModalOpen] = useState(false);
-    const handleOpenCarModal = (() => {
-        setIsCarModalOpen(true);
+        if (isCarModalDelete) {
+            setIsCarModalDelete(false);
+
+        }
+        if (isCarModalOpen) {
+            setIsCarModalOpen(false);
+        }
     });
 
     /**
@@ -163,7 +232,6 @@ function Account() {
             .then(res => {
                 console.log(res.data);
                 setPersonData(res.data);
-                handleClose();
                 alert("Vos informations ont bien été modifiées");
             })
             .catch(err => console.log("Error from server: ", err));
@@ -195,9 +263,9 @@ function Account() {
                                 </CardDescription>
                             )}
                         </div>
-                        {carData && (
-                            <div className="border-l pl-2 text-left bg-bleuClair rounded hover:bg-orange"
-                                 onClick={handleOpenCarModal}>
+                        {carData && carData.marque && carData.modele && carData.immatriculation && carData["nombre de places"] ? (
+                            <div className="border-l pl-2 text-left rounded hover:bg-bleuClair cursor-pointer"
+                                 onClick={handleOpenCarModalDelete}>
                                 <div className="text-center border-b">
                                     <h2>Mon véhicule</h2>
                                 </div>
@@ -206,6 +274,11 @@ function Account() {
                                     <p>Immatriculation du véhicule : {carData.immatriculation}</p>
                                     <p>Nombre de place maximum : <span>{carData["nombre de places"]}</span></p>
                                 </div>
+                            </div>
+                        ) : (
+                            <div className="border-l flex items-center justify-center p-2">
+                                <Button className="text-white" onClick={handleOpenCarModal}>Ajouter une
+                                    voiture</Button>
                             </div>
                         )}
                     </CardContent>
@@ -218,6 +291,7 @@ function Account() {
                     </CardFooter>
                 </Card>
 
+                {/*Modal pour modifier les informations de l'utilisateur*/}
                 <Modal isOpen={isPersonModalOpen} handleClose={handleClosePerson}>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleSubmitProfilForm)} className="space-y-8 text-left">
@@ -300,10 +374,7 @@ function Account() {
                                     </FormItem>
                                 )}
                             />
-                            {/*// TODO : Ajouter la modification de la voiture*/}
-                            <div
-                                className="w-full bg-bleuFonce flex justify-around items-center h-[50px]"
-                            >
+                            <div className="w-full bg-bleuFonce flex justify-around items-center h-[50px]">
                                 <Button className={"text-white"} type="submit">Valider</Button>
                                 <Button className={"hover:bg-orange text-white"} type="button" onClick={() => {
                                     form.reset({
@@ -321,10 +392,40 @@ function Account() {
                     </Form>
                 </Modal>
 
+                {/*Modal pour ajouter une voiture*/}
                 <Modal isOpen={isCarModalOpen} handleClose={handleCloseCar}>
-                    <h2 className="text-center text-white">Modifier votre véhicule</h2>
+                    <h2 className="text-center text-white">Ajouter votre véhicule</h2>
+                    <form className={"text-left text-white"}>
+                        <label>
+                            Marque de voiture
+                            <Input type={"text"} value={brand} onChange={(e) => setBrand(e.target.value)}/>
+                        </label>
+                        <label>
+                            Modèle de voiture
+                            <Input type={"text"} value={model} onChange={(e) => setModel(e.target.value)}/>
+                        </label>
+                        <label>
+                            Nombre de places
+                            <Input type={"number"} value={numberOfSeats}
+                                   onChange={(e) => setNumberOfSeats(Number(e.target.value))}/>
+                        </label>
+                        <label>
+                            immatriculation
+                            <Input type={"text"} value={registrationNumber}
+                                   onChange={(e) => setRegistrationNumber(e.target.value)}/>
+                        </label>
+                    </form>
                     <div className="flex justify-center">
-                        <Button className="text-white m-1 hover:bg-orange">Modifier</Button>
+                        <Button className="text-white m-1 hover:bg-orange" onClick={handleCreateCar}>Valider</Button>
+                    </div>
+                </Modal>
+
+                {/*Modal pour supprimer la voiture*/}
+                <Modal isOpen={isCarModalDelete} handleClose={handleCloseCar} className={"bg-red-200"}>
+                    <h2 className="text-center text-white">Supprimer votre véhicule</h2>
+                    <div className="flex justify-center">
+                        <Button className="text-white m-1 hover:bg-red-500"
+                                onClick={() => handleDeleteCar(carData.id)}>Valider</Button>
                     </div>
                 </Modal>
 

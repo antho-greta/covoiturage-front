@@ -17,7 +17,7 @@ function Header() {
     }
 
     return (
-        <NavigationMenu className="shadow-md shadow-bleuClair">
+        <NavigationMenu className="shadow-md shadow-dark">
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <Link to="/allTrips">

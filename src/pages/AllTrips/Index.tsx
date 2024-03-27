@@ -51,7 +51,7 @@ function AllTrips() {
                                         <span>  {trip["ville d'arrivée"]}</span>
                                     </div>
                                     <div>
-                                        <p>TODO Total distance</p>
+                                        <p>{trip["distance en kilometres"]}</p>
                                     </div>
                                 </CardContent>
                                 <CardFooter className="justify-start pl-4">

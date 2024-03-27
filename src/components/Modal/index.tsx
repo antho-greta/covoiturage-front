@@ -10,19 +10,18 @@ interface ModalProps {
 
 function Modal({children, isOpen, handleClose}: ModalProps) {
     return (
-        <div id="static-modal" data-modal-backdrop="static"  aria-hidden="true"
-             className={`flex items-center justify-center justify-center overflow-y-auto 
-             overflow-x-hidden  fixed inset-0 z-50
+        <div id="static-modal" data-modal-backdrop="static" aria-hidden="true"
+             className={`flex items-center justify-center overflow-y-auto overflow-x-hidden fixed inset-0 z-50
               ${isOpen ? 'block' : 'hidden'}`}
              onClick={handleClose}
         >
             {isOpen && <div className="fixed inset-0 bg-black opacity-50"></div>}
-            <div className="p-4 w-[50vw] h-[50vh] max-w-2xl rounded-xl"
+            <div className="p-4 w-[50vw] h-[50vh] max-w-2xl"
                  onClick={(e) => e.stopPropagation()}>
-                <div className="relative bg-white shadow dark:bg-bleuFonce">
+                <div className="relative bg-white shadow dark:bg-bleuFonce rounded-lg">
                     <div>
                         <Button className="absolute top-4 right-4" onClick={handleClose}><FontAwesomeIcon
-                            icon={faClose}/></Button>
+                            icon={faClose} className={"text-white"}/></Button>
                     </div>
                     <div className="p-4 md:p-5 space-y-4">
                         {children}
