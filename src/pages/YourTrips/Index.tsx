@@ -130,7 +130,7 @@ function YourTrips() {
                                         <span>  {trip["ville d'arrivée"]}</span>
                                     </div>
                                     <div>
-                                        <p>{trip["distance en kilometres"]} km</p> {/* Affiche la distance du trajet */}
+                                        <p>{trip["distance en kilometres"]} km</p>
 
                                     </div>
                                 </CardContent>
@@ -155,7 +155,7 @@ function YourTrips() {
                                 <p>Distance : {selectedTrip["distance en kilometres"]}</p>
                                 <p>Date : {selectedTrip["date du trajet"]}</p>
                             </div>
-                            <Button className={"bg-red-500 text-white mt-5 w-2/4 mx-auto"}
+                            <Button className={"text-white mt-5 w-2/4 mx-auto hover:bg-orange text-red-500"}
                                     onClick={() => handleDelete(selectedTrip.id)}>Supprimer</Button>
                         </div>
                     )}

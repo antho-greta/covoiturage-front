@@ -424,8 +424,8 @@ function Account() {
                 <Modal isOpen={isCarModalDelete} handleClose={handleCloseCar} className={"bg-red-200"}>
                     <h2 className="text-center text-white">Supprimer votre véhicule</h2>
                     <div className="flex justify-center">
-                        <Button className="text-white m-1 hover:bg-red-500"
-                                onClick={() => handleDeleteCar(carData.id)}>Valider</Button>
+                        <Button className="text-red-500 m-1 hover:bg-orange"
+                                onClick={() => handleDeleteCar(carData.id)}>Confirmer la suppression</Button>
                     </div>
                 </Modal>
 
