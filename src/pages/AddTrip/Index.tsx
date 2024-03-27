@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Page from "@/components/Page";
 import {accountService} from "@/services/account.service";
@@ -110,68 +110,74 @@ function AddTrip() {
 
     return (
         <Page>
-            <Card>
-                {error ? error : null}
-                <form onSubmit={(e) => {
-                    e.preventDefault()
-                    handleSubmit()
-                }}>
-                    <Select onValueChange={(value: string) => setIdCityDepart(parseInt(value))}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Choisissez une ville de départ"/>
-                        </SelectTrigger>
-                        <SelectContent className="m-2">
-                            <SelectGroup>
-                                <SelectLabel>Villes de départ</SelectLabel>
-                                {
-                                    cities?.map((city) => (
-                                        city && city.id &&
-                                        <SelectItem key={city?.id} value={city?.id.toString()}>
-                                            {city?.cityName}
-                                        </SelectItem>
-                                    ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+            <div className="pt-3 rounded-none w-[80%] h-[100%] text-center text-white">
+                <h1 className="p-2 bg-bleuFonce my-2 rounded">Détails du Trajet</h1>
+                <Card className={"justify-center items-center flex"}>
+                    <div className={"p-5 flex flex-col justify-center items-center"}>
+                        {error ? error : null}
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            handleSubmit()
+                        }}>
+                            <Select onValueChange={(value: string) => setIdCityDepart(parseInt(value))}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Choisissez une ville de départ"/>
+                                </SelectTrigger>
+                                <SelectContent className="m-2">
+                                    <SelectGroup>
+                                        <SelectLabel>Villes de départ</SelectLabel>
+                                        {
+                                            cities?.map((city) => (
+                                                city && city.id &&
+                                                <SelectItem key={city?.id} value={city?.id.toString()}>
+                                                    {city?.cityName}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
 
-                    <Select
-                        onValueChange={(value: string) => setIdCityArrivee(parseInt(value))}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Choisissez une ville de d'arrivée"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Villes d'arrivée</SelectLabel>
-                                {
-                                    cities?.map((city) => (
-                                        city && city.id &&
-                                        <SelectItem key={city?.id} value={city?.id.toString()}>
-                                            {city?.cityName}
-                                        </SelectItem>
-                                    ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                            <Select
+                                onValueChange={(value: string) => setIdCityArrivee(parseInt(value))}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Choisissez une ville de d'arrivée"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Villes d'arrivée</SelectLabel>
+                                        {
+                                            cities?.map((city) => (
+                                                city && city.id &&
+                                                <SelectItem key={city?.id} value={city?.id.toString()}>
+                                                    {city?.cityName}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
 
-                    <label>Date du départ
-                        <DatePicker
-                            selected={startDate}
-                            onChange={(date: Date) => setStartDate(date)}
-                            showTimeSelect
-                            timeFormat="HH:mm"
-                            timeIntervals={15}
-                            dateFormat="yyyy-MM-dd'T'HH:mm"
-                        />
-                    </label>
+                            <label className={"w-full flex flex-col text-left my-2 py-2 text-black"}>Date du départ
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={(date: Date) => setStartDate(date)}
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15}
+                                    dateFormat="yyyy-MM-dd'T'HH:mm"
+                                />
+                            </label>
 
-                    <label>
-                        Nombre de kilomètres
-                        <input type="number" value={killometers} onChange={(e) => setKillometers(e.target.value)}/>
-                    </label>
+                            <label className={"w-full flex flex-col text-left my-2 text-black"}>
+                                Nombre de kilomètres
+                                <input type="number" value={killometers}
+                                       onChange={(e) => setKillometers(e.target.value)}/>
+                            </label>
 
-                    <Button type="submit">Soumettre</Button>
-                </form>
-            </Card>
+                            <Button className="mt-2" type="submit">Soumettre</Button>
+                        </form>
+                    </div>
+                </Card>
+            </div>
         </Page>
     );
 }

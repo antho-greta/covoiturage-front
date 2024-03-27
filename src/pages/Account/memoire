@@ -1,0 +1,29 @@
+// const fetchTrips = async (token: string) => {
+    //     try {
+    //         const carBrand = await axios({
+    //             method: 'get',
+    //             url: 'http://localhost:8000/api/carBrand/listCarBrand',
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`
+    //             }
+    //         });
+    //         const villeDepart = await axios({
+    //             method: 'get',
+    //             url: 'http://localhost:8000/api/city/listCity',
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`
+    //             }
+    //         });
+    //         const villeArrivee = await axios({
+    //             method: 'get',
+    //             url: 'http://localhost:8000/api/city/listCity',
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`
+    //             }
+    //         });
+    //         const selectedTrips = carBrand.data || villeDepaert.data || villeArrivee.data;
+    //         setData(selectedTrips);
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }

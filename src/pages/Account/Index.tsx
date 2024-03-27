@@ -92,6 +92,7 @@ function Account() {
             .then((response) => {
                 console.log(response.data);
                 setCarData(response.data);
+                setIsCarModalOpen(false);
                 alert("Votre voiture a bien été ajoutée");
             })
             .catch((error) => {
@@ -412,7 +413,7 @@ function Account() {
                         <label>
                             immatriculation
                             <Input type={"text"} value={registrationNumber}
-                                   onChange={(e) => setRegistrationNumber(e.target.value)}/>
+                                   onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase())}/>
                         </label>
                     </form>
                     <div className="flex justify-center">

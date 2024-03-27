@@ -36,14 +36,14 @@ function AllTrips() {
 
     return (
         <Page>
-            <div className="pt-3 rounded-none w-[80%] h-[100%] cursor-pointer text-center">
-                <h1 className="p-2">Liste des Trajets</h1>
+            <div className="pt-3 rounded-none w-[80%] h-[100%] text-center">
+                <h1 className="p-2 bg-bleuFonce my-2 rounded">Liste des Trajets</h1>
                 {data && data.map((trip, index) => {
                     if (index === 0) return null; // On ne prend pas en compte le premier élément du tableau qui est vide
                     return (
                         <Link to={`/trip/${trip.id}`} key={index}>
                             <Card key={index}
-                                  className="w-full border-none my-1 bg-bleuFonce hover:bg-bleuClair transition-colors duration-200">
+                                  className="w-full border-none my-1 bg-bleuFonce hover:bg-bleuClair cursor-pointer transition-colors duration-200">
                                 <CardContent className="flex justify-between pl-4 pr-4">
                                     <div>
                                         <span>{trip["ville de départ"]}  </span>

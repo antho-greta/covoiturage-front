@@ -5,13 +5,22 @@ import {Button} from "@/components/ui/button.tsx";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Card, CardTitle} from "@/components/ui/card.tsx";
 import {
     useNavigate,
 } from "react-router-dom";
 import Page from "@/components/Page";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select.tsx";
 
 interface Person {
     id: number;
@@ -22,6 +31,12 @@ interface Person {
     email: string;
     ville: string;
     cdp: string;
+}
+
+interface City {
+    id: number;
+    cityName: string;
+    cityCdp: string;
 }
 
 const formSchema = z.object({
@@ -37,17 +52,17 @@ const formSchema = z.object({
     email: z.string().email({
         message: "⬆ Veuillez entrer un email valide.",
     }),
-    ville: z.string().min(2, {
-        message: "⬆ Une ville possède au moins 2 charactères.",
-    }),
-    cdp: z.string().min(5, {
-        message: "⬆ Un code postal possède au moins 5 chiffres.",
+    ville: z.string().nonempty({
+        message: "⬆ Veuillez sélectionner une ville.",
     }),
 })
 
 function personForm() {
     const [person, setPerson] = useState<Person | null>(null);
     const navigate = useNavigate();
+    const [cities, setCities] = useState<City[] | null>(null);
+    const [idCity, setIdCity] = useState<number | null>(null);
+    const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -61,6 +76,28 @@ function personForm() {
         },
     })
 
+    const handleCitySelection = (cityId: string) => {
+        const selectedCity = cities?.find(city => city.id === parseInt(cityId));
+        setSelectedCity(selectedCity);
+    }
+
+    useEffect(() => {
+        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+        axios({
+            method: 'get',
+            url: 'http://localhost:8000/api/city/listCity',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then((response) => {
+                setCities(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     const handleSubmitFormPerson = async (data: z.infer<typeof formSchema>) => {
         const token = accountService.isLogged() ? localStorage.getItem('token') : '';
         const idRegister = localStorage.getItem('idRegister');
@@ -73,8 +110,8 @@ function personForm() {
             lastName: data.nom,
             phone: data.telephone,
             mail: data.email,
-            cityName: data.ville,
-            cityCdp: data.cdp
+            cityName: selectedCity?.cityName,
+            cityCdp: selectedCity?.cityCdp,
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -145,32 +182,24 @@ function personForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="ville"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Ville</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="text" placeholder="Ville"/>
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="cdp"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Code Postal</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="text" placeholder="Code postal"/>
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+
+                        <Select onValueChange={handleCitySelection}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Choisissez une ville"/>
+                            </SelectTrigger>
+                            <SelectContent className="m-2">
+                                <SelectGroup>
+                                    <SelectLabel>Villes</SelectLabel>
+                                    {
+                                        cities?.map((city) => (
+                                            city && city.id &&
+                                            <SelectItem key={city?.id} value={city?.id.toString()}>
+                                                {city?.cityName} - {city?.cityCdp}
+                                            </SelectItem>
+                                        ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                         <div
                             className="w-full bg-bleuFonce flex justify-around items-center h-[50px]"
                         >

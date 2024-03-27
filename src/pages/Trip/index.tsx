@@ -4,6 +4,7 @@ import axios from 'axios';
 import {accountService} from "@/services/account.service.tsx";
 import Page from '../../components/Page/index.tsx';
 import {Button} from "@/components/ui/button.tsx";
+import {Card, CardContent} from "@/components/ui/card.tsx";
 
 interface Trip {
     id: number;
@@ -36,44 +37,50 @@ const TripDetails: React.FC = () => {
                 .catch((error) => console.log(error))
         }, [id]);
 
-    const handleJoin = useCallback(() => {
-        const token = accountService.isLogged() ? localStorage.getItem('token') : '';
-        axios({
-            method: 'post',
-            url: `http://localhost:8000/api/trip/passenger/joinTrip/${id}`,
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then((response) => {
-                console.log(trip);
-                setTrip(response.data[1]);
-                alert("Vous avez rejoint le trajet avec succès");
-            }).catch((error) => {
-            console.log(error);
-            if(error.response && error.response.data && error.response.data.error){
-                alert(error.response.data.error);
-            }else{
-                alert("Erreur lors de la jointure du trajet");
-            }
+        const handleJoin = useCallback(() => {
+            const token = accountService.isLogged() ? localStorage.getItem('token') : '';
+            axios({
+                method: 'post',
+                url: `http://localhost:8000/api/trip/passenger/joinTrip/${id}`,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then((response) => {
+                    console.log(trip);
+                    setTrip(response.data[1]);
+                    alert("Vous avez rejoint le trajet avec succès");
+                }).catch((error) => {
+                console.log(error);
+                if (error.response && error.response.data && error.response.data.error) {
+                    alert(error.response.data.error);
+                } else {
+                    alert("Erreur lors de la jointure du trajet");
+                }
 
-        })
-    }, [id, trip]);
+            })
+        }, [id, trip]);
 
         return (
             <Page>
-                {trip && (
-                    <div>
-                        <h1>Détails du Trajet</h1>
-                        <p>Conducteur: {trip["prénom du conducteur"]} {trip["nom du conducteur"]}</p>
-                        <p>Ville de départ: {trip["ville de départ"]}</p>
-                        <p>Ville d'arrivée: {trip["ville d'arrivée"]}</p>
-                        <p>Distance: {trip["distance en kilometres"]} km</p>
-                        <p>Places disponibles: {trip["nombre de place disponobles"]}</p>
-                        <p>Date du trajet: {trip["date du trajet"]}</p>
-                    </div>
-                )}
-                <Button onClick={() => handleJoin()}>Rejoindre le trajet</Button>
+                <div className="pt-3 rounded-none w-[80%] h-[100%] text-center">
+                    <h1 className="p-2 bg-bleuFonce my-2 rounded">Détails du Trajet</h1>
+                    <Card className={"p-4 justify-center items-center"}>
+                        {trip && (
+                            <CardContent className="flex justify-between p-4 text-left justify-center items-center">
+                                <div>
+                                    <p>Conducteur: {trip["prénom du conducteur"]} {trip["nom du conducteur"]}</p>
+                                    <p>Ville de départ: {trip["ville de départ"]}</p>
+                                    <p>Ville d'arrivée: {trip["ville d'arrivée"]}</p>
+                                    <p>Distance: {trip["distance en kilometres"]} km</p>
+                                    <p>Places disponibles: {trip["nombre de place disponobles"]}</p>
+                                    <p>Date du trajet: {trip["date du trajet"]}</p>
+                                </div>
+                            </CardContent>
+                        )}
+                        <Button onClick={() => handleJoin()}>Rejoindre le trajet</Button>
+                    </Card>
+                </div>
             </Page>
         );
     }
